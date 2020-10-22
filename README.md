@@ -1,1 +1,1 @@
-# Machineleaningprojects
+# Machineleaningprojects is a repo created by me to help me keep track of and showcase all of the Machine Learning projects that I've personally worked and practiced on. Based on the update date the projects become more complex and demanding.
