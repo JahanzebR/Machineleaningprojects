@@ -24,11 +24,18 @@ df_y = pd.DataFrame(boston.target)
 # Initialize the linear regression model
 reg = linear_model.LinearRegression()
 
+# Import the random forest model
+from sklearn.ensemble import RandomForestRegressor
+
+# Initialize the model
+RFR = RandomForestRegressor(n_estimators=100, min_samples_leaf=10, random_state=1)
+
 # Split the data into 67% training and 33% testing data
 x_train, x_test, y_train, y_test = train_test_split(df_x, df_y, test_size=0.33, random_state=42)
 
 # Train the model with our training data
 reg.fit(x_train, y_train)
+RFR.fit(x_train, y_train.values.ravel())
 params = reg.get_params()
 # print(params)
 
@@ -36,9 +43,10 @@ params = reg.get_params()
 # print(reg.coef_)
 
 # Print the predictions on our test data
-y_pred = reg.predict(x_test)
-# print(y_pred)
-
+LR_y_pred = reg.predict(x_test)
+# print(LR_y_pred)
+RFR_y_pred = RFR.predict(x_test)
+# print(RFR_y_pred)
 # print the actual values
 # print(y_test)
 
@@ -47,4 +55,7 @@ y_pred = reg.predict(x_test)
 
 # Check the model performance/accuracy using sklearn.metrics
 from sklearn.metrics import mean_squared_error
-print(mean_squared_error(y_test, y_pred))
+LR_prediction_error = mean_squared_error(y_test, LR_y_pred)
+RFR_prediction_error = mean_squared_error(y_test, RFR_y_pred)
+print('Mean Squared Error obtained by performing Linear Regression: {}'.format(LR_prediction_error))
+print('Mean Squared Error obtained by performing Random Forest Regression Regression: {}'.format(RFR_prediction_error))
