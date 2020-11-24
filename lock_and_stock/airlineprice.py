@@ -25,12 +25,6 @@ airline = airline.dropna(axis=0)
 # print(airline.shape)
 
 
-# def numberofstops(x):
-#     if(x == "non-stop"):
-#         return 0
-#     else:
-#         return x.split(' ')[0]
-
 # Create a function that isolates the number of stops from the Layover columns
 
 def RepresentsInt(s):
@@ -53,20 +47,45 @@ for i in range(len(arr)):
 airline.insert(4, column="stopnumber", value=stopnumber)
 
 # for i in range(10):
-#     print('Layover is equal to = {},'.format(airline.Layover[i]),
-#         'Stop Number is equal to = {}'.format(airline.stopnumber[i]))
+# print('Layover is equal to = {},'.format(airline.Layover[i]),
+#     'Stop Number is equal to = {}'.format(airline.stopnumber[i]))
 
 # Isolate the time span of the flight and simplify it to just minutes of flight time
 
 h = airline['Time span'].str.extract('(\d+)h', expand=False).astype(float) * 60
+# print(h)
 m = airline['Time span'].str.extract('(\d+)m', expand=False).astype(float)
 
-airline['flighttimeminutes'] = h.add(m, fill_value=0).astype(int).astype(str)
-
+airline['flighttimeminutes'] = h.add(m, fill_value=0).astype(int)
+# print(airline.flighttimeminutes[:50])
 # print(airline.shape)
 
 airline['monthofflight'] = pd.DatetimeIndex(airline['Flight Date'], dayfirst=True).month
 # print(airline.monthofflight)
+
+AirlineID = []
+airlines = airline['Air Service']
+airlineIds = {}
+counterIds = 1
+
+for i in airlines:
+    if not airlineIds.get(i, False):
+        airlineIds[i] = counterIds
+        counterIds += 1
+
+# print(airlineIds)
+
+airservice = airline['Air Service'].to_numpy()
+
+for i in range(len(airservice)):
+    AirlineID.append(airlineIds.get(airservice[i]))
+
+airline.insert(2, column="AirlineID", value=AirlineID)
+
+# for i in range(10):
+#     print('Airline name = {},'.format(airline['Air Service'][i]),
+#           'Airline ID= {}'.format(airline.AirlineID[i]))
+
 
 # plt.hist(airline["monthofflight"])
 # plt.show()
