@@ -82,6 +82,18 @@ for i in range(len(airservice)):
 
 airline.insert(2, column="AirlineID", value=AirlineID)
 
+flighthour = []
+takeofftime = airline['Take off time'].to_numpy()
+for i in range(len(takeofftime)):
+    flighthour.append(takeofftime[i].split(':')[0])
+
+
+for i in range(len(flighthour)):
+    flighthour[i] = int(flighthour[i])
+    flighthour[i] = flighthour[i] * 100
+
+airline.insert(11, column="flighthour", value=flighthour)
+
 # for i in range(10):
 #     print('Airline name = {},'.format(airline['Air Service'][i]),
 #           'Airline ID= {}'.format(airline.AirlineID[i]))
@@ -90,12 +102,85 @@ airline.insert(2, column="AirlineID", value=AirlineID)
 # plt.hist(airline["monthofflight"])
 # plt.show()
 
-corrmat = airline.corr()
-fig = plt.figure(figsize=(12, 6))
+# corrmat = airline.corr()
+# fig = plt.figure(figsize=(12, 6))
 
-sns.heatmap(corrmat, vmax=0.8, square=True)
-plt.show()
+# sns.heatmap(corrmat, vmax=0.8, square=True)
+# plt.show()
 
 # scatter plot matrix
 # scatter_matrix(airline)
 # plt.show()
+# print(airline.columns)
+
+columns = airline.columns.tolist()
+
+# Filter the columns to remove data we do not want
+columns = [c for c in columns if c not in ["Air Service", "Flight Direction/Routine", "About", "Layover", "Time span", "Cost",
+                                           "Flight Date", "Start", "Stop", "Take off time", "Landing time",
+                                           "flighthour", 'monthofflight']]
+
+# Store the variable we'll be predicting on
+target = "Cost"
+
+# Generate training set
+train = airline.sample(frac=0.8, random_state=1)
+
+# Select anything not in the training set and put it in the test set
+test = airline.loc[~airline.index.isin(train.index)]
+
+# Print Shapes
+# print(train.shape)
+# print(test.shape)
+
+# Import linear regression model
+from sklearn.linear_model import LinearRegression
+from sklearn.metrics import mean_squared_error
+
+# Initialize the model class
+LR = LinearRegression(fit_intercept=True, normalize=False, copy_X=True, n_jobs=None)
+
+
+# Fit the model to the training data
+LR.fit(train[columns], train[target])
+
+
+# Generate predictions for the test set
+predictions = LR.predict(test[columns])
+
+
+# Compute error between our test predictions and actual values
+print('MSE using Linear Regression: {}'.format(mean_squared_error(predictions, test[target])))
+
+# Import the random forest model
+from sklearn.ensemble import RandomForestRegressor
+
+
+# Initialize the model
+RFR = RandomForestRegressor(n_estimators=2000, min_samples_leaf=10, random_state=1)
+
+
+# Fit to the data
+RFR.fit(train[columns], train[target])
+
+
+# make predictions
+predictions = RFR.predict(test[columns])
+
+
+# compute the error between our test predictions and actual values
+print('MSE using Random Forest Regression Regression: {}'.format(mean_squared_error(predictions, test[target])))
+
+# Make prediction with both models (use reshape so the value of the test dataset passes as a 2D array )
+
+rating_LR = LR.predict(test[columns].iloc[0].values.reshape(1, -1))
+
+rating_RFR = RFR.predict(test[columns].iloc[0].values.reshape(1, -1))
+
+
+# Print out the predictions
+print(rating_LR)
+print(rating_RFR)
+
+# Actual value from the test set for comparison
+print(test[target].iloc[0])
