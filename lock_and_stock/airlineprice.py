@@ -179,6 +179,7 @@ print(airline.shape)
 
 # columns = airline.columns.tolist()
 
+<<<<<<< HEAD
 # # Filter the columns to remove data we do not want
 # columns = [c for c in columns if c not in ["Air Service",
 #                                            "Flight Direction/Routine",
@@ -203,6 +204,20 @@ print(airline.shape)
 # print(columns)
 # # Store the variable we'll be predicting on
 # target = "Cost"
+=======
+# Filter the columns to remove data we do not want
+columns = [c for c in columns if c not in ["Air Service", "Flight Direction/Routine", "About", "Layover", "Time span", "Cost",
+                                           "Flight Date", "Start", "Stop", "Take off time", "Landing time",
+                                           # "flighthour",
+                                           # 'monthofflight',
+                                           # 'AirlineID',
+                                           # 'stopnumber',
+                                           'flighttimeminutes'
+                                           ]]
+print(columns)
+# Store the variable we'll be predicting on
+target = "Cost"
+>>>>>>> c29e1708a9dc887a1fc661bed6876767a4591087
 
 # # Generate training set
 # train = airline.sample(frac=0.8, random_state=1)
@@ -237,8 +252,13 @@ print(airline.shape)
 # from sklearn.ensemble import RandomForestRegressor
 
 
+<<<<<<< HEAD
 # # Initialize the model
 # RFR = RandomForestRegressor(n_estimators=1000, min_samples_leaf=10, random_state=1)
+=======
+# Initialize the model
+RFR = RandomForestRegressor(n_estimators=1000, min_samples_leaf=10, random_state=1)
+>>>>>>> c29e1708a9dc887a1fc661bed6876767a4591087
 
 
 # # Fit to the data
@@ -254,6 +274,7 @@ print(airline.shape)
 
 # # Make prediction with both models (use reshape so the value of the test dataset passes as a 2D array )
 
+<<<<<<< HEAD
 # cost_LR = LR.predict(test[columns].iloc[100].values.reshape(1, -1))
 
 # cost_RFR = RFR.predict(test[columns].iloc[100].values.reshape(1, -1))
@@ -265,3 +286,16 @@ print(airline.shape)
 
 # # Actual value from the test set for comparison
 # print(test[target].iloc[100])
+=======
+cost_LR = LR.predict(test[columns].iloc[100].values.reshape(1, -1))
+
+cost_RFR = RFR.predict(test[columns].iloc[100].values.reshape(1, -1))
+
+
+# Print out the predictions
+print(cost_LR)
+print(cost_RFR)
+
+# Actual value from the test set for comparison
+print(test[target].iloc[100])
+>>>>>>> c29e1708a9dc887a1fc661bed6876767a4591087
